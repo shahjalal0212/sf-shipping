@@ -292,7 +292,7 @@ export default function AdminDashboard() {
                         </div>
                         <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#10b981', backgroundColor: '#ecfdf5', padding: '4px 10px', borderRadius: '8px', border: '1px solid #d1fae5' }}>Received</span>
                       </div>
-                      <p style={{ margin: 0, fontSize: '14px', color: '#334155', leadingHeight: '1.6', backgroundColor: '#ffffff', padding: '16px', border: '1px solid #e2e8f0', borderRadius: '12px', whiteSpace: 'pre-wrap' }}>{msg.message}</p>
+                      <p style={{ margin: 0, fontSize: '14px', color: '#334155', lineHeight: '1.6', backgroundColor: '#ffffff', padding: '16px', border: '1px solid #e2e8f0', borderRadius: '12px', whiteSpace: 'pre-wrap' }}>{msg.message}</p>
                     </div>
                   ))
                 )}
