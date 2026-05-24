@@ -1,7 +1,6 @@
-// app/(website)/gallery/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 
 interface GalleryItem {
   id: number;
@@ -13,12 +12,15 @@ interface GalleryItem {
 export default function GalleryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }> | { category?: string } | any;
+  searchParams: Promise<{ category?: string }> | { category?: string };
 }) {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [currentCategory, setCurrentCategory] = useState<string | undefined>(undefined);
+  
+  // searchParams প্রপার্টিটিকে unwrapping করা
+  const params = use(searchParams);
+  const currentCategory = params?.category;
 
   useEffect(() => {
     fetch('/api/gallery')
@@ -30,17 +32,13 @@ export default function GalleryPage({
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    if (searchParams) {
-      Promise.resolve(searchParams).then((params) => {
-        setCurrentCategory(params?.category);
-      });
-    }
-  }, [searchParams]);
-
+  // ফিল্টার লজিক: ডাটাবেজের ক্যাটাগরি এবং URL প্যারামিটার মিলিয়ে দেখবে
   const filteredItems = galleryItems.filter((item: GalleryItem) => {
-    if (currentCategory === 'crew') return item.category === 'Crew Gallery';
-    if (currentCategory === 'client') return item.category === 'Client Meeting';
+    if (!currentCategory) return true;
+    
+    const itemCat = item.category.toLowerCase();
+    if (currentCategory === 'crew') return itemCat.includes('crew');
+    if (currentCategory === 'client') return itemCat.includes('client');
     return true;
   });
 
@@ -52,7 +50,6 @@ export default function GalleryPage({
     <div className="bg-white text-slate-900 min-h-screen py-16 px-6 relative">
       <div className="max-w-7xl mx-auto">
         
-        {/* হেডার সেকশন */}
         <header className="text-center mb-16">
           <span className="text-blue-600 text-xs font-bold tracking-widest uppercase bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
             Our Memories
@@ -63,10 +60,9 @@ export default function GalleryPage({
           <div className="h-1 w-20 bg-blue-600 mx-auto mt-4"></div>
         </header>
 
-        {/* ছবি দেখানোর গ্রিড */}
         {filteredItems.length === 0 ? (
           <div className="text-center py-20 text-slate-500 bg-slate-50 border border-slate-200 rounded-3xl">
-            এই ক্যাটাগরিতে এখনো কোনো ছবি যোগ করা হয়নি।
+            এই ক্যাটাগরিতে এখনো কোনো ছবি যোগ করা হয়নি।
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -91,14 +87,12 @@ export default function GalleryPage({
         )}
       </div>
 
-      {/* বড় করে ছবি দেখানোর পপআপ (Modal) */}
       {selectedImage && (
         <div 
           className="fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-all"
           onClick={() => setSelectedImage(null)}
         >
           <div className="relative max-w-4xl max-h-[85vh] w-full flex items-center justify-center">
-            {/* বন্ধ করার বাটন */}
             <button 
               className="absolute -top-12 right-0 md:-right-10 text-white hover:text-red-500 text-3xl font-bold bg-slate-950/40 w-10 h-10 rounded-full flex items-center justify-center transition-colors"
               onClick={() => setSelectedImage(null)}
@@ -114,7 +108,6 @@ export default function GalleryPage({
           </div>
         </div>
       )}
-
     </div>
   );
 }
