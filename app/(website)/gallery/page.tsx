@@ -18,7 +18,6 @@ export default function GalleryPage({
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
-  // searchParams প্রপার্টিটিকে unwrapping করা
   const params = use(searchParams);
   const currentCategory = params?.category;
 
@@ -32,14 +31,15 @@ export default function GalleryPage({
       .finally(() => setLoading(false));
   }, []);
 
-  // ফিল্টার লজিক: ডাটাবেজের ক্যাটাগরি এবং URL প্যারামিটার মিলিয়ে দেখবে
+  // আপডেট করা ফিল্টার লজিক: এটি এখন URL এর প্যারামিটারের সাথে যেকোনো ক্যাটাগরি মিলিয়ে নিতে পারবে
   const filteredItems = galleryItems.filter((item: GalleryItem) => {
     if (!currentCategory) return true;
     
-    const itemCat = item.category.toLowerCase();
-    if (currentCategory === 'crew') return itemCat.includes('crew');
-    if (currentCategory === 'client') return itemCat.includes('client');
-    return true;
+    // ডাটাবেজের ক্যাটাগরি এবং URL প্যারামিটার উভয়কেই ছোট হাতের অক্ষরে রূপান্তর করে চেক করবে
+    const itemCatLower = item.category.toLowerCase();
+    const searchCatLower = currentCategory.toLowerCase();
+    
+    return itemCatLower.includes(searchCatLower);
   });
 
   if (loading) {
