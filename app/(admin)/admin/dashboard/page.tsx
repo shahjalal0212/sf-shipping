@@ -30,12 +30,13 @@ export default function AdminDashboard() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+ const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "SF2026") {
+    // এখানে ইমেইলটিও চেক করা হবে
+    if (password === "SF2026" && email === "shahjalal0212@gmail.com") {
       setAuthenticated(true);
     } else {
-      alert("ভুল পাসওয়ার্ড!");
+      alert("ইমেইল বা পাসওয়ার্ড ভুল!");
     }
   };
 
